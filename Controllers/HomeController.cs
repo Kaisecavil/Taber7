@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Taber7.Areas.Identity.Data;
 using Taber7.Models;
 
 namespace Taber7.Controllers
@@ -7,10 +9,12 @@ namespace Taber7.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        UserManager<ApplicationUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager)
         {
             _logger = logger;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -20,6 +24,12 @@ namespace Taber7.Controllers
 
         public IActionResult Privacy()
         {
+            return View();
+        }
+
+        public IActionResult Test()
+        {
+            ViewData["userId"] = _userManager.GetUserId(HttpContext.User);
             return View();
         }
 
