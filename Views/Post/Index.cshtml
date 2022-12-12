@@ -1,0 +1,15 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<div class="row">
+    <div>
+        <h1>@ViewBag.Title</h1>
+        @if (ViewBag.Content != default(string))
+        {
+            @Html.Raw(ViewBag.Content)
+        }
+    </div>
+</div>

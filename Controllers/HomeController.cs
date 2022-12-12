@@ -12,12 +12,14 @@ namespace Taber7.Controllers
         private readonly ILogger<HomeController> _logger;
         private UserManager<ApplicationUser> _userManager;
         private RoleManager<IdentityRole> _roleManager;
+        private ApplicationDbContext _applicationDbContext;
 
-        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,ApplicationDbContext applicationDbContext)
         {
             _logger = logger;
             _userManager = userManager;
             _roleManager = roleManager;
+            _applicationDbContext = applicationDbContext;
         }
 
         public IActionResult Index()
@@ -33,6 +35,8 @@ namespace Taber7.Controllers
         
         public IActionResult Test()
         {
+            var post = _applicationDbContext.Posts.Find("abcd");
+            ViewData["post"] = post.Html;
             var user = _userManager.Users.First();
             
             ViewData["userId"] = _userManager.GetUserId(HttpContext.User);
