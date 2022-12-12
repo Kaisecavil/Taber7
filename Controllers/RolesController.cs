@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Taber7.Models;
 using Taber7.ViewModels;
 using Taber7.Areas.Identity.Data;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace Taber7.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class RolesController : Controller
     {
         RoleManager<IdentityRole> _roleManager;
