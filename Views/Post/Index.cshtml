@@ -1,15 +1,13 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model IEnumerable<Taber7.Models.Post>
 
-<div class="row">
-    <div>
-        <h1>@ViewBag.Title</h1>
-        @if (ViewBag.Content != default(string))
-        {
-            @Html.Raw(ViewBag.Content)
-        }
-    </div>
+<h2>Новостная лента</h2>
+<image src="https://mir-s3-cdn-cf.behance.net/projects/max_808/8d076281676861.5d073b409d56c.png"></image>
+<div>
+    @foreach (var post in Model)
+    {
+        <div>
+            <h1>@post.Title</h1>
+            @Html.Raw(post.Html)
+        </div>
+    }
 </div>

@@ -24,21 +24,15 @@ namespace Taber7.Controllers
 
         public IActionResult Index()
         {
-            return View();
-        }
+            List<Post> posts =  _applicationDbContext.Posts.ToList();
 
-        [HttpPost]
-        public IActionResult Index(string title,string content)
-        {
-            ViewBag.Title = title;
-            ViewBag.Content = content;
-           
-            return View();
+            return View(posts);
         }
 
         [HttpPost]
         public IActionResult Create(string title, string content)
         {
+            
             ViewBag.Title = title;
             ViewBag.Content = content;
             ViewBag.HttpPost = true;
