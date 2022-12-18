@@ -1,0 +1,31 @@
+﻿@model IEnumerable<Taber7.Models.Coment>
+
+<div>
+    
+    <h1>Personal page for post</h1>
+    <div>
+        <h1>@ViewBag.Title</h1>
+        @Html.Raw(ViewBag.Html)
+    </div>
+    <div>
+        @using (Html.BeginForm("Post", "Post", FormMethod.Post))
+        {
+                <div>
+                    <label for="comment">Комментарии</label>
+                    <input id = "comment" name="comment">
+                </div>
+                <div>
+                <button type="submit">send</button>
+                </div>
+        }
+    </div>
+    <div>
+        @foreach (var comment in Model)
+        {
+                <div>
+                    @comment.Description<br>
+                    в @comment.CreatedDate<br>
+                </div>
+        }
+    </div>
+</div>

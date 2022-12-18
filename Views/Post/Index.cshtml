@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<Taber7.Models.Post>
 
 <h2>Новостная лента</h2>
-<image src="https://mir-s3-cdn-cf.behance.net/projects/max_808/8d076281676861.5d073b409d56c.png"></image>
 <div>
     @foreach (var post in Model)
     {
-        <div>
-            <h1>@post.Title</h1>
-            @Html.Raw(post.Html)
+        <div style="margin: 40px;">
+            <h1>@Html.ActionLink(post.Title, "Post", "Post", new { id=post.Id},new {style="text-decoration:none;"})</h1>
+            @*@Html.Raw(post.Html)*@
+            <h2>@post.CliveHanger...</h2>
         </div>
     }
 </div>

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Taber7.Areas.Identity.Data;
 using Taber7.Models;
+using System.Linq;
 
 namespace Taber7.Controllers
 {
@@ -24,21 +25,49 @@ namespace Taber7.Controllers
 
         public IActionResult Index()
         {
-            List<Post> posts =  _applicationDbContext.Posts.ToList();
+            List<Post> posts = _applicationDbContext.Posts.ToList();
 
             return View(posts);
         }
 
+        public IActionResult Post(string id)
+        {
+            Post post = _applicationDbContext.Posts.Find(id);
+            ViewBag.Title = post.Title;
+            ViewBag.Html = post.Html;
+            List<Coment> coments = _applicationDbContext.Coments.Where(c => c.PostId == post.Id).ToList();
+            return View(coments);
+        }
+
         [HttpPost]
-        public IActionResult Create(string title, string content)
+        [Authorize]
+        public IActionResult Post(string id, string comment)
+        {
+            Coment coment = new Coment(id, comment);
+            coment.CreatedDate = DateTime.Now;
+            Post post = _applicationDbContext.Posts.Find(id);
+            coment.Post = post;
+            coment.Id = Guid.NewGuid().ToString();
+            _applicationDbContext.Coments.Add(coment);
+            _applicationDbContext.SaveChanges();
+
+            return Content(coment.ToString());
+           
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult Create(string title, string clive, string tags , string content)
         {
             
             ViewBag.Title = title;
             ViewBag.Content = content;
             ViewBag.HttpPost = true;
-            
+            ViewBag.Clive = clive;
+            ViewBag.Tags = tags;
+
             var userId = _userManager.GetUserId(HttpContext.User);
-            Post post = new Post(title, content,userId);
+            Post post = new Post(title,clive,tags, content,userId);
             post.CreatedDate = DateTime.Now;
             post.Id = Guid.NewGuid().ToString();
             _applicationDbContext.Posts.Add(post);
@@ -46,6 +75,7 @@ namespace Taber7.Controllers
             return View();
         }
 
+        [Authorize]
         public IActionResult Create()
         {
             ViewBag.HttpPost = false;

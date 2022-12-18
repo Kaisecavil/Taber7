@@ -17,5 +17,11 @@
             Description = description;
             Rating = rating;
         }
+
+        
+        public string ToString()
+        {
+            return Id + " " + PostId + " " + Description + " " + Rating + " " + CreatedDate;
+        }
     }
 }

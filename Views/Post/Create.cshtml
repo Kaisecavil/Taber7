@@ -18,20 +18,31 @@
 }
 else
 {
-        <h1>@ViewBag.HttpPost</h1> 
-        <div>
+    <h1>@ViewBag.HttpPost</h1>
+    <h1>Создание записи</h1>
+        
+    <div>
         <script src="~/js/ckeditor5/ckeditor.js"></script>
         @using (Html.BeginForm("Create", "Post", FormMethod.Post))
         {
-                <div>
-                    <input id = "title" name="title">
-                </div>
-                <div>
-                    <textarea id = "content" name="content"></textarea>
-                </div>
-                <div>
-                    <button type="submit">send</button>
-                </div>
+            <div>
+                <label for="title">Тема</label>
+                <input id = "title" name="title">
+            </div>
+            <div>
+                <label for="clive">Тема расширено</label>
+                <input id = "clive" name="clive">
+            </div>
+            <div>
+                <label for="tags">Тэги</label>
+                <input id = "tags" name="tags">
+            </div>
+            <div>
+                <textarea id = "content" name="content"></textarea>
+            </div>
+            <div>
+                <button type="submit">send</button>
+            </div>
         }
     </div>
     <script>
