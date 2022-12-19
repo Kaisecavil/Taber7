@@ -5,6 +5,7 @@ using System.Diagnostics;
 using Taber7.Areas.Identity.Data;
 using Taber7.Models;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Taber7.Controllers
 {
@@ -35,7 +36,9 @@ namespace Taber7.Controllers
             Post post = _applicationDbContext.Posts.Find(id);
             ViewBag.Title = post.Title;
             ViewBag.Html = post.Html;
-            List<Coment> coments = _applicationDbContext.Coments.Where(c => c.PostId == post.Id).ToList();
+
+            //List<Coment> coments = _applicationDbContext.Coments.Where(c => c.PostId == post.Id).ToList();
+            List<Coment> coments = _applicationDbContext.Coments.Where(c => c.PostId == post.Id).Include(u => u.User).ToList();
             return View(coments);
         }
 
@@ -43,16 +46,20 @@ namespace Taber7.Controllers
         [Authorize]
         public IActionResult Post(string id, string comment)
         {
-            Coment coment = new Coment(id, comment);
+            string userid = _userManager.GetUserId(HttpContext.User);
+            ApplicationUser user = _applicationDbContext.Users.Find(userid);
+            Coment coment = new Coment(id,userid, comment);
             coment.CreatedDate = DateTime.Now;
+            coment.User = user;
+            coment.UserId = userid;
             Post post = _applicationDbContext.Posts.Find(id);
             coment.Post = post;
             coment.Id = Guid.NewGuid().ToString();
             _applicationDbContext.Coments.Add(coment);
             _applicationDbContext.SaveChanges();
 
-            return Content(coment.ToString());
-           
+            return RedirectToAction("Post", new { id = id });
+
         }
 
         [Authorize]
@@ -82,14 +89,28 @@ namespace Taber7.Controllers
             return View();
         }
 
-        public IActionResult Edit() 
+        public IActionResult Edit(string str) 
         {
-            return RedirectToAction("Index");
+            return Content(str);
+            //return RedirectToAction("Index");
         }
 
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string id)
         {
-            return View();
+
+            try
+            {
+                _applicationDbContext.Posts.Remove(_applicationDbContext.Posts.Find(id));
+                _applicationDbContext.SaveChanges();
+                //return View();
+                //return Content(id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return Content("не найдена запись");
+            }
+            
         }
     }
 }

@@ -12,7 +12,7 @@ using System.Data;
 
 namespace Taber7.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize (Roles = "Admin")]
     public class RolesController : Controller
     {
         RoleManager<IdentityRole> _roleManager;

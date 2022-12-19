@@ -22,9 +22,10 @@
     <div>
         @foreach (var comment in Model)
         {
+                
                 <div>
                     @comment.Description<br>
-                    в @comment.CreatedDate<br>
+                @comment.User.FirstName @comment.User.LastName в @comment.CreatedDate<br>
                 </div>
         }
     </div>
