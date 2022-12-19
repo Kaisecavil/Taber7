@@ -5,7 +5,6 @@
 }
 @if (ViewBag.HttpPost == true)
 {
-        <h1>@ViewBag.HttpPost</h1> 
     <div class="row">
         <div class="mb-3">
             <h1>@ViewBag.Title</h1>
@@ -18,7 +17,6 @@
 }
 else
 {
-    <h1>@ViewBag.HttpPost</h1>
     <h1>Создание записи</h1>
         
     <div>
@@ -27,21 +25,21 @@ else
         {
             <div>
                 <label for="title">Тема</label>
-                <input id = "title" name="title">
+                <input id = "title" name="title" class="form-control">
             </div>
             <div>
                 <label for="clive">Тема расширено</label>
-                <input id = "clive" name="clive">
+                <input id = "clive" name="clive" class="form-control">
             </div>
             <div>
                 <label for="tags">Тэги</label>
-                <input id = "tags" name="tags">
+                <input id = "tags" name="tags" class="form-control">
             </div>
-            <div>
+            <div style="margin: 40px;">
                 <textarea id = "content" name="content"></textarea>
             </div>
             <div>
-                <button type="submit">send</button>
+                <button type="submit" class="btn btn-primary">send</button>
             </div>
         }
     </div>

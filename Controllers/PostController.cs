@@ -15,6 +15,8 @@ namespace Taber7.Controllers
         private UserManager<ApplicationUser> _userManager;
         private RoleManager<IdentityRole> _roleManager;
         private ApplicationDbContext _applicationDbContext;
+        //private string _userId;
+        //private ApplicationUser _user;
 
         public PostController(ILogger<PostController> logger, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext applicationDbContext)
         {
@@ -22,6 +24,8 @@ namespace Taber7.Controllers
             _userManager = userManager;
             _roleManager = roleManager;
             _applicationDbContext = applicationDbContext;
+            //_userId = _userManager.GetUserId(HttpContext.User);
+            //_user = _applicationDbContext.Users.Find(_userId);
         }
 
         public IActionResult Index()
@@ -31,12 +35,21 @@ namespace Taber7.Controllers
             return View(posts);
         }
 
-        public IActionResult Post(string id)
+        public async Task<IActionResult> PostAsync(string id)
         {
             Post post = _applicationDbContext.Posts.Find(id);
             ViewBag.Title = post.Title;
+            ViewBag.PostId = post.Id;
             ViewBag.Html = post.Html;
-
+            string userid = _userManager.GetUserId(HttpContext.User);
+            ApplicationUser user = _applicationDbContext.Users.Find(userid);
+            var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+            string str = "";
+            foreach (var item in roles)
+            {
+                str = str + item;
+            }
+            ViewBag.Roles = str;
             //List<Coment> coments = _applicationDbContext.Coments.Where(c => c.PostId == post.Id).ToList();
             List<Coment> coments = _applicationDbContext.Coments.Where(c => c.PostId == post.Id).Include(u => u.User).ToList();
             return View(coments);
@@ -95,20 +108,66 @@ namespace Taber7.Controllers
             //return RedirectToAction("Index");
         }
 
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> DeleteAsync(string id)
         {
 
             try
             {
-                _applicationDbContext.Posts.Remove(_applicationDbContext.Posts.Find(id));
-                _applicationDbContext.SaveChanges();
-                //return View();
-                //return Content(id);
-                return RedirectToAction("Index");
+                string userid = _userManager.GetUserId(HttpContext.User);
+                ApplicationUser user = _applicationDbContext.Users.Find(userid);
+                var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+                var post = _applicationDbContext.Posts.Find(id);
+
+                if (roles.Contains("Admin"))
+                {
+                    _applicationDbContext.Posts.Remove(post);
+                    _applicationDbContext.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                else if (post.ApplicationUserId == user.Id)
+                {
+                    _applicationDbContext.Posts.Remove(post);
+                    _applicationDbContext.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return Content("Access Denied");
+                }
+
             }
             catch (Exception ex)
             {
                 return Content("не найдена запись");
+            }
+
+            
+
+        }
+
+        [Authorize]
+        public async Task<IActionResult> DeleteComentAsync(string id)
+        {
+            string userid = _userManager.GetUserId(HttpContext.User);
+            ApplicationUser user = _applicationDbContext.Users.Find(userid);
+            var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+            var coment = _applicationDbContext.Coments.Find(id);
+
+            if (roles.Contains("Admin"))
+            {
+                _applicationDbContext.Coments.Remove(coment);
+                _applicationDbContext.SaveChanges();
+                return RedirectToAction("Post", new { id = coment.PostId });
+            }
+            else if (coment.UserId == user.Id)
+            {
+                _applicationDbContext.Coments.Remove(coment);
+                _applicationDbContext.SaveChanges();
+                return RedirectToAction("Post", new { id = coment.PostId });
+            }
+            else
+            {
+                return Content("Access Denied");
             }
             
         }

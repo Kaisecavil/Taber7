@@ -2,31 +2,36 @@
 
 <div>
     
-    <h1>Personal page for post</h1>
     <div>
+        <h1> Roles  =  @ViewBag.Roles</h1>
         <h1>@ViewBag.Title</h1>
         @Html.Raw(ViewBag.Html)
     </div>
+    
     <div>
-        @using (Html.BeginForm("Post", "Post", FormMethod.Post))
-        {
-                <div>
-                    <label for="comment">Комментарии</label>
-                    <input id = "comment" name="comment">
-                </div>
-                <div>
-                <button type="submit">send</button>
-                </div>
-        }
-    </div>
-    <div>
+        <h2>Коментарии</h2>
+        <div>
+            @using (Html.BeginForm("Post", "Post", FormMethod.Post))
+            {
+                    <div>
+                        <label for="comment">Оставьте комментарий</label>
+                        <input id = "comment" name="comment" class="form-control" style="margin: 20px">
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">send</button>
+                    </div>
+
+            }
+        </div>
         @foreach (var comment in Model)
         {
                 
-                <div>
+                <div style="margin: 40px;">
                     @comment.Description<br>
-                @comment.User.FirstName @comment.User.LastName в @comment.CreatedDate<br>
+                    <i>@comment.User.FirstName @comment.User.LastName</i> в @comment.CreatedDate<br>
+                            <i>@Html.ActionLink("Delete coment", "DeleteComent","Post", new { id=comment.Id},new {style="text-decoration:none;"})</i>
                 </div>
         }
     </div>
+    <i>@Html.ActionLink("Delete post", "Delete","Post", new { id = ViewBag.PostId},new {style="text-decoration:none;"})</i>
 </div>
