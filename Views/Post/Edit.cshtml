@@ -1,0 +1,72 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Taber7.Models.Post;
+
+@if (ViewBag.HttpPost == true)
+{
+        <div class="row">
+            <div class="mb-3">
+                <h1>@ViewBag.Title</h1>
+            @if (ViewBag.Content != default(string))
+            {
+                @Html.Raw(ViewBag.Content)
+            }
+            </div>
+        </div>
+}
+else
+{
+        <h1>Редактирование записи</h1>
+
+        <div>
+            <script src="~/js/ckeditor5/ckeditor.js"></script>
+            <script>
+                alert("hellot");
+                    var myEditor = null;
+                document.addEventListener("DOMContentLoaded", function(event){
+                        ClassicEditor.create(document.querySelector('#content')).then(editor =>
+                        {
+                            myEditor = editor;
+                        });
+
+
+                });
+                    const content = '<p>A paragraph with <a href="https://ckeditor.com">some link</a>.';   
+                        myEditor.setData(content);
+                        alert(content);
+                        const viewFragment = editor.data.processor.toView( content );
+                        const modelFragment = editor.data.toModel( viewFragment );
+                        editor.model.insertContent( modelFragment );
+            </script>
+        @using (Html.BeginForm("Edit", "Post", FormMethod.Post))
+        {
+                    <div>
+                        <label for="title">Тема</label>
+                        <input id = "title" name="title" class="form-control" value="@Model.Title">
+                    </div>
+                    <div>
+                        <label for="clive">Тема расширено</label>
+                                <input id = "clive" name="clive" class="form-control" value="@Model.CliveHanger">
+                    </div>
+                    <div>
+                        <label for="tags">Тэги</label>
+                                <input id = "tags" name="tags" class="form-control" value="@Model.Tags">
+                    </div>
+                    <div style="margin: 40px;">
+                                <textarea id = "content" name="content" value="@Model.Html"></textarea>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">send</button>
+                    </div>
+        }
+        </div>
+        <script>
+            
+                
+        </script>
+}
+
+

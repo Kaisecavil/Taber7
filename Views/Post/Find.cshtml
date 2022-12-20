@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Taber7.Models.Post>
+
+    <div>
+    @using (Html.BeginForm("Find", "Post", FormMethod.Post))
+    {
+                <div>
+                    <label for="query">Поиск по названию</label>
+                    <input id = "query" name="query" class="form-control">
+                      
+                    <legend>Выбериде среди чего искать</legend>
+                    
+                    <div>
+                        <input type="radio" id="titleson" name="filter" value="title" checked>
+                        <label for="titleson">Среди названий</label><br>
+                        <input type="radio" id="tagson" name="filter" value="tag">
+                        <label for="tagson">Среди тэгов</label><br>
+                        <input type="radio" id="contenton" name="filter" value="content">
+                        <label for="contenton">Среди содержимого</label><br>
+                    </div>
+                    
+                </div>
+
+                <div>
+                    <button type="submit" class="btn btn-primary">search</button>
+                </div>
+    }
+    </div>
+
+@if (ViewBag.HttpPost == true){
+        <h2>Результат поиска</h2>
+    <div>
+        @foreach (var post in Model)
+        {
+                    <div style="margin: 40px;">
+                        <h1>@Html.ActionLink(post.Title, "Post", "Post", new { id=post.Id},new {style="text-decoration:none;"})</h1>
+                        @*@Html.Raw(post.Html)*@
+                        <h2>@post.CliveHanger...</h2>
+                    </div>
+        }
+    </div>
+}

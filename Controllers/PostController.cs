@@ -102,10 +102,49 @@ namespace Taber7.Controllers
             return View();
         }
 
-        public IActionResult Edit(string str) 
+        public async Task<IActionResult> EditAsync(string id) 
         {
-            return Content(str);
-            //return RedirectToAction("Index");
+            try
+            {
+                string userid = _userManager.GetUserId(HttpContext.User);
+                ApplicationUser user = _applicationDbContext.Users.Find(userid);
+                var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+                var post = _applicationDbContext.Posts.Find(id);
+
+                if (roles.Contains("Admin"))
+                {
+                    ViewBag.Title = post.Title;
+                    ViewBag.Content = post.Html;
+                    ViewBag.HttpPost = false;
+                    ViewBag.Clive = post.CliveHanger;
+                    ViewBag.Tags = post.Tags;
+                    ViewBag.Rating = post.Rating;
+                    ViewBag.UserId = post.ApplicationUserId;
+                    ViewBag.PostId = post.Id;
+                    return View(post);
+                }
+                else if (post.ApplicationUserId == user.Id)
+                {
+                    ViewBag.Title = post.Title;
+                    ViewBag.Content = post.Html;
+                    ViewBag.HttpPost = false;
+                    ViewBag.Clive = post.CliveHanger;
+                    ViewBag.Tags = post.Tags;
+                    ViewBag.Rating = post.Rating;
+                    ViewBag.UserId = post.ApplicationUserId;
+                    ViewBag.PostId = post.Id;
+                    return View(post);
+                }
+                else
+                {
+                    return Content("Access Denied");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Content("не найдена запись");
+            }
         }
 
         public async Task<IActionResult> DeleteAsync(string id)
@@ -171,5 +210,33 @@ namespace Taber7.Controllers
             }
             
         }
+
+        public IActionResult Find()
+        {
+            ViewBag.HttpPost = false;
+            return View(null);
+        }
+
+        [HttpPost]
+        public IActionResult Find(string query, string filter)
+        {
+            ViewBag.HttpPost = true;
+            ViewBag.Query = query;
+            ViewBag.Filter = filter;
+            var posts = _applicationDbContext.Posts.Where(p => p.Title.ToUpper().Contains(query.ToUpper())).ToList<Post>();
+            switch (filter)
+            {
+                case "tag":
+                    posts = _applicationDbContext.Posts.Where(p => p.Tags.ToUpper().Contains(query.ToUpper())).ToList<Post>(); break;
+                case "title":
+                    posts = _applicationDbContext.Posts.Where(p => p.Title.ToUpper().Contains(query.ToUpper())).ToList<Post>(); break;
+                case "content":
+                    posts = _applicationDbContext.Posts.Where(p => p.Html.ToUpper().Contains(query.ToUpper())).ToList<Post>(); break;
+
+            }
+            return View(posts);
+        }
+
     }
+
 }
