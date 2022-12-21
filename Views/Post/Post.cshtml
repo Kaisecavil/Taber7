@@ -9,7 +9,7 @@
     </div>
     
     <div>
-        <h2>Коментарии</h2>
+        <h2>Комментарии</h2>
         <div>
             @using (Html.BeginForm("Post", "Post", FormMethod.Post))
             {
@@ -18,7 +18,7 @@
                         <input id = "comment" name="comment" class="form-control" style="margin: 20px">
                     </div>
                     <div>
-                        <button type="submit" class="btn btn-primary">send</button>
+                        <button type="submit" class="btn btn-primary">Отправить</button>
                     </div>
 
             }
@@ -29,11 +29,11 @@
                 <div style="margin: 40px;">
                     @comment.Description<br>
                     <i>@comment.User.FirstName @comment.User.LastName</i> в @comment.CreatedDate<br>
-                                    <i>@Html.ActionLink("Delete comment", "DeleteComent","Post", new { id=comment.Id},new {style="text-decoration:none;"}) @Html.ActionLink("Edit comment", "EditComent","Post", new { id=comment.Id},new {style="text-decoration:none;"})</i>
+                                    <i>@Html.ActionLink("Удалить комментарий", "DeleteComent","Post", new { id=comment.Id},new {style="text-decoration:none;"}) @Html.ActionLink("Изменить комментарий", "EditComent","Post", new { id=comment.Id},new {style="text-decoration:none;"})</i>
                 </div>
         }
     </div>
-    <i>@Html.ActionLink("Delete post", "Delete","Post", new { id = ViewBag.PostId},new {style="text-decoration:none;"})</i></br>
-    <i>@Html.ActionLink("Edit post", "Edit","Post", new { id = ViewBag.PostId},new {style="text-decoration:none;"})</i></br>
-    <i>Posted By @ViewBag.Author</i>
+    <i>@Html.ActionLink("Удалить запись", "Delete","Post", new { id = ViewBag.PostId},new {style="text-decoration:none;"})</i></br>
+    <i>@Html.ActionLink("Редактировать запись", "Edit","Post", new { id = ViewBag.PostId},new {style="text-decoration:none;"})</i></br>
+    <i>Автор - @ViewBag.Author</i>
 </div>

@@ -10,7 +10,7 @@
                     <h1>@Html.ActionLink(post.Title, "Post", "Post", new { id=post.Id},new {style="text-decoration:none;"})</h1>
                 @*@Html.Raw(post.Html)*@
                     <h2>@post.CliveHanger...</h2>
-                    <i>By @post.ApplicationUser.FirstName @post.ApplicationUser.LastName in @post.CreatedDate</i>
+                    <i>@post.ApplicationUser.FirstName @post.ApplicationUser.LastName от @post.CreatedDate</i>
                 </div>
         }
     }
@@ -19,4 +19,4 @@
             <h2>Посты закончились :(</h2>
     }
 </div>
-<i>@Html.ActionLink("Next", "Index","Post", new { start = ViewBag.Start},new {style="text-decoration:none;"})</i></br>
+<i>@Html.ActionLink("Следующая страница", "Index","Post", new { start = ViewBag.Start},new {style="text-decoration:none;"})</i></br>
