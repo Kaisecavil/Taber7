@@ -2,12 +2,21 @@
 
 <h2>Новостная лента</h2>
 <div>
-    @foreach (var post in Model)
+    @if(Model.Any())
     {
-        <div style="margin: 40px;">
-            <h1>@Html.ActionLink(post.Title, "Post", "Post", new { id=post.Id},new {style="text-decoration:none;"})</h1>
-            @*@Html.Raw(post.Html)*@
-            <h2>@post.CliveHanger...</h2>
-        </div>
+        @foreach (var post in Model)
+        {
+                <div style="margin: 40px;">
+                    <h1>@Html.ActionLink(post.Title, "Post", "Post", new { id=post.Id},new {style="text-decoration:none;"})</h1>
+                @*@Html.Raw(post.Html)*@
+                    <h2>@post.CliveHanger...</h2>
+                    <i>By @post.ApplicationUser.FirstName @post.ApplicationUser.LastName in @post.CreatedDate</i>
+                </div>
+        }
+    }
+    else
+    {
+            <h2>Посты закончились :(</h2>
     }
 </div>
+<i>@Html.ActionLink("Next", "Index","Post", new { start = ViewBag.Start},new {style="text-decoration:none;"})</i></br>

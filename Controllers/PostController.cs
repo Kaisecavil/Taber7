@@ -6,6 +6,9 @@ using Taber7.Areas.Identity.Data;
 using Taber7.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace Taber7.Controllers
 {
@@ -28,28 +31,45 @@ namespace Taber7.Controllers
             //_user = _applicationDbContext.Users.Find(_userId);
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int start = 0,int step = 5)
         {
-            List<Post> posts = _applicationDbContext.Posts.ToList();
-
-            return View(posts);
+            List<Post> posts = _applicationDbContext.Posts.Include(p => p.ApplicationUser).ToList();
+            try
+            {
+                List<Post> postse = posts.GetRange(start, step);
+                ViewBag.Start = start + step;
+              
+                return View(postse);
+            }
+            catch(Exception e)
+            {
+                ViewBag.Start = start + posts.Count - start;
+                return View(posts.GetRange(start, posts.Count-start));
+            }
+            
         }
 
         public async Task<IActionResult> PostAsync(string id)
         {
-            Post post = _applicationDbContext.Posts.Find(id);
+            var post = _applicationDbContext.Posts.Include(p => p.ApplicationUser).Where(p => p.Id == id).First();
+            //Post post = _applicationDbContext.Posts.Include(p => p.ApplicationUser).Find(id);
             ViewBag.Title = post.Title;
             ViewBag.PostId = post.Id;
             ViewBag.Html = post.Html;
-            string userid = _userManager.GetUserId(HttpContext.User);
-            ApplicationUser user = _applicationDbContext.Users.Find(userid);
-            var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
-            string str = "";
-            foreach (var item in roles)
+            ViewBag.Author = post.ApplicationUser.FirstName + " " + post.ApplicationUser.LastName;
+            if (HttpContext.User.Identity.IsAuthenticated)
             {
-                str = str + item;
+                string userid = _userManager.GetUserId(HttpContext.User);
+                ApplicationUser user = _applicationDbContext.Users.Find(userid);
+                var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+                string str = "";
+                foreach (var item in roles)
+                {
+                    str = str + item;
+                }
+                ViewBag.Roles = str;
             }
-            ViewBag.Roles = str;
+            else ViewBag.Roles = "Guest";
             //List<Coment> coments = _applicationDbContext.Coments.Where(c => c.PostId == post.Id).ToList();
             List<Coment> coments = _applicationDbContext.Coments.Where(c => c.PostId == post.Id).Include(u => u.User).ToList();
             return View(coments);
@@ -102,6 +122,7 @@ namespace Taber7.Controllers
             return View();
         }
 
+        [Authorize]
         public async Task<IActionResult> EditAsync(string id) 
         {
             try
@@ -147,6 +168,68 @@ namespace Taber7.Controllers
             }
         }
 
+        [Authorize]
+        public async Task<IActionResult> EditComentAsync(string id)
+        {
+            ViewBag.HttpPost = true;
+            string userid = _userManager.GetUserId(HttpContext.User);
+            ApplicationUser user = _applicationDbContext.Users.Find(userid);
+            var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+            var coment = _applicationDbContext.Coments.Find(id);
+
+            if (roles.Contains("Admin"))
+            {
+                return View(_applicationDbContext.Coments.Find(id));
+            }
+            else if (coment.UserId == user.Id)
+            {
+                return View(_applicationDbContext.Coments.Find(id));
+            }
+            else
+            {
+                return Content("Access Denied");
+            }
+            
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> EditComentAsync(string id, string comm)
+        {
+            ViewBag.HttpPost = true;
+           
+            try
+            {
+                string userid = _userManager.GetUserId(HttpContext.User);
+                ApplicationUser user = _applicationDbContext.Users.Find(userid);
+                var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+                var coment = _applicationDbContext.Coments.Find(id);
+
+                if (roles.Contains("Admin"))
+                {
+                    coment.Description = comm;
+                    _applicationDbContext.SaveChanges();
+                    return RedirectToAction("Post", new { id = coment.PostId });
+                }
+                else if (coment.UserId == user.Id)
+                {
+                    coment.Description = comm;
+                    _applicationDbContext.SaveChanges();
+                    return RedirectToAction("Post", new { id = coment.PostId });
+                }
+                else
+                {
+                    return Content("Access Denied");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Content("не найдена запись");
+            }
+        }
+
+        [Authorize]
         public async Task<IActionResult> DeleteAsync(string id)
         {
 
@@ -232,6 +315,8 @@ namespace Taber7.Controllers
                     posts = _applicationDbContext.Posts.Where(p => p.Title.ToUpper().Contains(query.ToUpper())).ToList<Post>(); break;
                 case "content":
                     posts = _applicationDbContext.Posts.Where(p => p.Html.ToUpper().Contains(query.ToUpper())).ToList<Post>(); break;
+                case "user":
+                    posts = _applicationDbContext.Posts.Include(p => p.ApplicationUser).Where(p => p.ApplicationUser.FirstName.ToUpper().Contains(query.ToUpper()) || p.ApplicationUser.LastName.ToUpper().Contains(query.ToUpper()) || p.ApplicationUser.Email.ToUpper().Contains(query.ToUpper())).ToList<Post>(); break;
 
             }
             return View(posts);

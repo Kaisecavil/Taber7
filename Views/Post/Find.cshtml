@@ -4,7 +4,7 @@
     @using (Html.BeginForm("Find", "Post", FormMethod.Post))
     {
                 <div>
-                    <label for="query">Поиск по названию</label>
+                    <label for="query">Поиск по ...</label>
                     <input id = "query" name="query" class="form-control">
                       
                     <legend>Выбериде среди чего искать</legend>
@@ -16,6 +16,8 @@
                         <label for="tagson">Среди тэгов</label><br>
                         <input type="radio" id="contenton" name="filter" value="content">
                         <label for="contenton">Среди содержимого</label><br>
+                        <input type="radio" id="useron" name="filter" value="user">
+                        <label for="useron">Среди авторов</label><br>
                     </div>
                     
                 </div>

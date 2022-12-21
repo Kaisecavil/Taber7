@@ -1,0 +1,14 @@
+﻿@model Taber7.Models.Coment
+
+    @using (Html.BeginForm("EditComent", "Post", FormMethod.Post))
+    {                    
+        <div>
+            <label for="tags">Комментарий</label>
+            <input id = "comm" name="comm" class="form-control" required value="@Model.Description">
+        </div>
+        
+        <div>
+            <button type="submit" class="btn btn-primary">send</button>
+        </div>
+    }
+

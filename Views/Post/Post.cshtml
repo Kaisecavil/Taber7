@@ -3,7 +3,7 @@
 <div>
     
     <div>
-        <h1> Roles  =  @ViewBag.Roles</h1>
+        @*<h1> Roles  =  @ViewBag.Roles</h1>*@
         <h1>@ViewBag.Title</h1>
         @Html.Raw(ViewBag.Html)
     </div>
@@ -29,10 +29,11 @@
                 <div style="margin: 40px;">
                     @comment.Description<br>
                     <i>@comment.User.FirstName @comment.User.LastName</i> в @comment.CreatedDate<br>
-                            <i>@Html.ActionLink("Delete coment", "DeleteComent","Post", new { id=comment.Id},new {style="text-decoration:none;"})</i>
+                                    <i>@Html.ActionLink("Delete comment", "DeleteComent","Post", new { id=comment.Id},new {style="text-decoration:none;"}) @Html.ActionLink("Edit comment", "EditComent","Post", new { id=comment.Id},new {style="text-decoration:none;"})</i>
                 </div>
         }
     </div>
     <i>@Html.ActionLink("Delete post", "Delete","Post", new { id = ViewBag.PostId},new {style="text-decoration:none;"})</i></br>
-    <i>@Html.ActionLink("Edit post", "Edit","Post", new { id = ViewBag.PostId},new {style="text-decoration:none;"})</i>
+    <i>@Html.ActionLink("Edit post", "Edit","Post", new { id = ViewBag.PostId},new {style="text-decoration:none;"})</i></br>
+    <i>Posted By @ViewBag.Author</i>
 </div>
